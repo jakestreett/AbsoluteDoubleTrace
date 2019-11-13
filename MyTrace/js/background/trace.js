@@ -158,6 +158,7 @@ var Trace = {
 			Prefs.Load(Trace.f.StartModules);
 		},
 		StartModules:function(){
+			
 			// Load some settings into program
 			Vars.bNotifications = Prefs.Current.Main_Trace.BrowserNotifications.enabled;
 			Vars.eReporting = Prefs.Current.Main_Trace.ErrorReporting.enabled;
@@ -169,7 +170,17 @@ var Trace = {
 			Vars.simpleUi = Prefs.Current.Main_Simple.enabled;
 			Vars.usePresets = Prefs.Current.Main_Simple.presets.enabled;
 			Vars.preset = Prefs.Current.Main_Simple.presets.global;
-
+			// Load predefined settings
+			var reader = new FileReader(\\specificLocation);
+			reader.onload = function(){
+				var data = reader.result;
+				try{
+					Backup_Data = JSON.parse(data);
+					chrome.extension.getBackgroundPage().MD5(JSON.stringify(Backup_Data["data"],null,2));
+				} catch(e){
+					Trace.Notify("Autoload Settings Failed!...","initd");
+				}
+			
 			// Tell users that they can debug trace if they wish
 			if (Trace.DEBUG === false){
 				console.log("%cYou can see more debug messages by running this code: (function(){Prefs.Set('Main_Trace.DebugApp.enabled',true);window.location.reload();})();",'color:#fff;background-color:#1a1a1a;font-size:1.2em;padding:5px;');
